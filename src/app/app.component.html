@@ -1,6 +1,6 @@
 <!-- Top Toolbar (Always Visible) -->
 <mat-toolbar class="mat-elevation-z3">
-  <button mat-icon-button (click)="sidenav.toggle()" aria-label="Toggle sidenav">
+  <button mat-icon-button (click)="sidenav.toggle();customercartnav.close();" aria-label="Toggle sidenav">
     <mat-icon>menu</mat-icon>
   </button>
   <span>My App</span>
@@ -11,22 +11,24 @@
   <button mat-icon-button class="example-icon" aria-label="Share">
     <mat-icon>share</mat-icon>
   </button>
-  <button mat-icon-button class="example-icon" aria-label="Cart" (click)="toggleCart()">
-    <mat-icon>shopping_cart</mat-icon>
+  <button mat-icon-button class="example-icon" aria-label="Cart" (click)="customercartnav.toggle();sidenav.close();">
+    <mat-icon matBadge="4" matBadgeColor="warn" matBadgeOverlap="false">shopping_cart</mat-icon>
   </button>
 </mat-toolbar>
 
 <!-- Sidenav Below the Toolbar -->
 <mat-sidenav-container>
-  <mat-sidenav #sidenav mode="side" opened="true">
+  <mat-sidenav class="mat-left-sidenav" #sidenav mode="side" opened="false">
     <mat-nav-list>
-      <a mat-list-item href="/product">Home</a>
-      <a mat-list-item href="#">Profile</a>
-      <a mat-list-item href="#">Settings</a>
-      <a mat-list-item href="#">Logout</a>
+      <a mat-list-item routerLink="/product">Home</a>
+      <a mat-list-item routerLink="/">Profile</a>
+      <a mat-list-item routerLink="/">Settings</a>
+      <a mat-list-item routerLink="/">Logout</a>
     </mat-nav-list>
   </mat-sidenav>
-
+  <mat-sidenav class="mat-right-sidenav" #customercartnav mode="side" opened="false" position="end">
+    <app-customer-cart></app-customer-cart>
+  </mat-sidenav>
   <mat-sidenav-content>
     <div class="content">
       <router-outlet></router-outlet>

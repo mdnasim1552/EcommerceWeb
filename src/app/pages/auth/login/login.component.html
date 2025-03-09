@@ -1,0 +1,39 @@
+<mat-card class="login-card">
+    <h2>Login</h2>
+    <form (ngSubmit)="onSubmit()">
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Email</mat-label>
+            <input matInput type="email" [formControl]="email" (blur)="updateEmailErrorMessage()" required
+                placeholder="pat@example.com" />
+            @if (email.invalid) {
+            <mat-error>{{ emailErrorMessage() }}</mat-error>
+            }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Password</mat-label>
+            <input matInput [type]="hidePassword() ? 'password' : 'text'" [formControl]="password"
+                (blur)="updatePasswordErrorMessage()" required />
+            <button mat-icon-button matSuffix (click)="hidePassword.set(!hidePassword())" type="button">
+                <mat-icon>{{ hidePassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
+            @if (password.invalid) {
+            <mat-error>{{ passwordErrorMessage() }}</mat-error>
+            }
+        </mat-form-field>
+
+        <button mat-raised-button color="primary" type="submit" [disabled]="email.invalid || password.invalid">
+            Login
+        </button>
+        <div class="social-login">
+            <!-- <button mat-raised-button color="warn" (click)="loginWithGoogle()">
+                <mat-icon>account_circle</mat-icon> Login with Google
+            </button> -->
+            <asl-google-signin-button type='standard' size='large' shape="circle" [width]=360></asl-google-signin-button>
+
+            <button mat-raised-button color="primary" (click)="loginWithFacebook()">
+                <mat-icon>facebook</mat-icon> Login with Facebook
+            </button>
+        </div>
+    </form>
+</mat-card>
