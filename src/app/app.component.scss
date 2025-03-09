@@ -11,10 +11,18 @@ mat-sidenav-container {
     height: calc(100vh - 64px);
 }
 
-.mat-sidenav {
+.mat-left-sidenav {
     background-color: #f5f5f5;
     /* Light gray background */
     box-shadow: 2px 0px 5px rgba(0, 0, 0, 0.2);
+    /* Shadow effect */
+    width: 250px;
+}
+
+.mat-right-sidenav {
+    background-color: #f5f5f5;
+    /* Light gray background */
+    box-shadow: -2px 0px 5px rgba(0, 0, 0, 0.2);
     /* Shadow effect */
     width: 250px;
 }

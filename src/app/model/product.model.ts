@@ -5,12 +5,12 @@ export interface Product {
     SubCategoryId: number;
     BrandId: number;
     UnitId: number;
-    Sku: string;
-    MinQuantity: number;
+    Sku?: string | null;
+    MinQuantity?: number | null;
     Quantity: number;
-    Description: string;
-    Tax: number;
-    Discount: number;
+    Description?: string | null;
+    Tax?: number | null;
+    Discount?: number | null;
     Status: string;
     Price: number;
     Image: string;
