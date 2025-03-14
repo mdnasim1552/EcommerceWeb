@@ -16,3 +16,8 @@
     flex-direction: column;
     gap: 10px;
 }
+asl-google-signin-button iframe {
+    width: 360px !important;
+    min-width: 360px !important;
+    max-width: 360px !important;
+  }

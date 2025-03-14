@@ -21,16 +21,23 @@
             <mat-error>{{ passwordErrorMessage() }}</mat-error>
             }
         </mat-form-field>
-
-        <button mat-raised-button color="primary" type="submit" [disabled]="email.invalid || password.invalid">
-            Login
-        </button>
+        
         <div class="social-login">
+            <button mat-raised-button color="primary" type="submit" [disabled]="email.invalid || password.invalid">
+                Login
+            </button>
+            <button mat-raised-button color="accent" type="button" (click)="navigateToRegister()">
+                Register
+            </button>
             <!-- <button mat-raised-button color="warn" (click)="loginWithGoogle()">
                 <mat-icon>account_circle</mat-icon> Login with Google
             </button> -->
-            <asl-google-signin-button type='standard' size='large' shape="circle" [width]=360></asl-google-signin-button>
-
+            <!-- <asl-google-signin-button type='icon' size='large' shape='circle'></asl-google-signin-button> -->
+            <!-- <button mat-raised-button color="primary" (click)="signInWithGoogle()">
+                <img src="assets/google-icon.svg" alt="Google logo" width="24" height="24">
+                Sign in with Google
+              </button> -->
+              <div id="google-signin-btn"></div>
             <button mat-raised-button color="primary" (click)="loginWithFacebook()">
                 <mat-icon>facebook</mat-icon> Login with Facebook
             </button>

@@ -12,7 +12,7 @@
     <mat-icon>share</mat-icon>
   </button>
   <button mat-icon-button class="example-icon" aria-label="Cart" (click)="customercartnav.toggle();sidenav.close();">
-    <mat-icon matBadge="4" matBadgeColor="warn" matBadgeOverlap="false">shopping_cart</mat-icon>
+    <mat-icon matBadge="4" matBadgeColor="warn" matBadgeOverlap="false" aria-hidden="false">shopping_cart</mat-icon>
   </button>
 </mat-toolbar>
 
@@ -23,7 +23,7 @@
       <a mat-list-item routerLink="/product">Home</a>
       <a mat-list-item routerLink="/">Profile</a>
       <a mat-list-item routerLink="/">Settings</a>
-      <a mat-list-item routerLink="/">Logout</a>
+      <a mat-list-item routerLink="/login">Logout</a>
     </mat-nav-list>
   </mat-sidenav>
   <mat-sidenav class="mat-right-sidenav" #customercartnav mode="side" opened="false" position="end">

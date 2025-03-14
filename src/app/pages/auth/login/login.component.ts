@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, signal } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -10,6 +10,13 @@ import { SocialAuthService, SocialLoginModule, SocialUser, GoogleLoginProvider, 
 import { BehaviorSubject, merge, Observable } from 'rxjs';
 import { AuthService } from '../../../service/auth.service';
 import { API_CONSTANTS } from '../../../constant/constant';
+import { error } from 'console';
+import { Router } from '@angular/router';
+declare global {
+  interface Window {
+    google: any;
+  }
+}
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -18,7 +25,7 @@ import { API_CONSTANTS } from '../../../constant/constant';
   styleUrl: './login.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit, AfterViewInit  {
   readonly email = new FormControl('', [Validators.required, Validators.email]);
   readonly password = new FormControl('', [Validators.required, Validators.minLength(6)]);
   readonly hidePassword = signal(true);
@@ -27,7 +34,7 @@ export class LoginComponent implements OnInit {
   passwordErrorMessage = signal('');
   user!: SocialUser | null;
   
-  constructor(private authService: SocialAuthService,private loginAuth: AuthService) {
+  constructor(private authService: SocialAuthService,private loginAuth: AuthService,private router: Router) {
     merge(this.email.statusChanges, this.email.valueChanges)
       .pipe(takeUntilDestroyed())
       .subscribe(() => this.updateEmailErrorMessage());
@@ -36,26 +43,86 @@ export class LoginComponent implements OnInit {
       .pipe(takeUntilDestroyed())
       .subscribe(() => this.updatePasswordErrorMessage());
   }
-  ngOnInit() {
-    this.authService.authState.subscribe(user => {
-      this.user = user;
-      if (user) {
-        //this.verifyWithBackend(user);
-        console.log('Google Login Success:', user.idToken);
-        this.loginAuth.sendGoogleTokenToBackend(user.idToken).subscribe({
-            next: response => {
-              console.log('Backend Response:', response);
-              if (response.data) {
-                localStorage.setItem(API_CONSTANTS.TOKEN_KEY, response.data);
-                this.loginAuth.setAuthStatus(true);
-              }
-            },
-            error: error => {
-              console.error('Error sending token:', error);
-            }
-          });
+  ngAfterViewInit(): void {
+    this.renderGoogleSignInButton();
+  }
+  renderGoogleSignInButton(): void {
+    if(this.loginAuth.BrowserEnvironment()){
+      window.google.accounts.id.initialize({
+        client_id: API_CONSTANTS.GOOGLE_CLIENT_ID,
+        callback: this.handleCredentialResponse.bind(this)
+      });
+  
+      window.google.accounts.id.renderButton(
+        document.getElementById("google-signin-btn")!,
+        {
+          type: "standard",
+          size: "large",
+          shape: "circle",
+          width: "360px" 
+        }
+      );
+    }   
+  }
+
+  handleCredentialResponse(response: any): void {
+    const user = response; // The user data returned by Google
+    console.log('Google User:', user);
+
+    this.loginAuth.sendGoogleTokenToBackend(user.credential).subscribe({
+      next: response => {
+        console.log('Backend Response:', response.result);
+        if (response.result) {
+          localStorage.setItem(API_CONSTANTS.TOKEN_KEY, response.data.token);
+          localStorage.setItem(API_CONSTANTS.AUTH_TYPE, 'social');
+          this.loginAuth.setAuthStatus(true);
+        }
+      },
+      error: error => {
+        console.error('Error sending token:', error);
       }
     });
+  }
+  onSubmit() {
+    if (this.email.valid && this.password.valid) {
+      const emailValue = this.email.value ?? ''; // Ensures a string is passed
+      const passwordValue = this.password.value ?? '';
+      console.log('Login Data:', { email: this.email.value, password: this.password.value });
+      this.loginAuth.login(emailValue,passwordValue).subscribe({
+        next:response=>{
+          if (response.result) {
+            localStorage.setItem(API_CONSTANTS.TOKEN_KEY, response.data.token);
+            localStorage.setItem(API_CONSTANTS.AUTH_TYPE, 'user');
+            this.loginAuth.setAuthStatus(true);
+          }
+        },error:error=>{
+          console.error('Error to login:', error);
+        }
+      });
+      // Call API for authentication
+    }
+  }
+  ngOnInit() {
+    // this.authService.authState.subscribe(user => {
+    //   this.user = user;
+    //   if (user) {
+    //     //this.verifyWithBackend(user);
+    //     console.log('Google Login Success:', user.idToken);
+    //     this.loginAuth.sendGoogleTokenToBackend(user.idToken).subscribe({
+    //         next: response => {
+    //           console.log('Backend Response:', response.result);
+    //           if (response.result) {
+    //             localStorage.setItem(API_CONSTANTS.TOKEN_KEY, response.data.token);
+    //             localStorage.setItem(API_CONSTANTS.AUTH_TYPE, 'social');
+    //             this.loginAuth.setAuthStatus(true);
+    //           }
+    //         },
+    //         error: error => {
+    //           console.error('Error sending token:', error);
+    //         }
+    //       });
+    //   }
+    // });
   }
 
   updateEmailErrorMessage() {
@@ -77,13 +144,6 @@ export class LoginComponent implements OnInit {
       this.passwordErrorMessage.set('');
     }
   }
-
-  onSubmit() {
-    if (this.email.valid && this.password.valid) {
-      console.log('Login Data:', { email: this.email.value, password: this.password.value });
-      // Call API for authentication
-    }
-  }
   // loginWithGoogle() {
   //   this.authService.signIn(GoogleLoginProvider.PROVIDER_ID).then(user => {
   //     this.user = user;
@@ -97,12 +157,7 @@ export class LoginComponent implements OnInit {
       console.log('Facebook Login Success:', user);
     });
   }
-  logout(): void {
-    this.authService.signOut();
-    console.log('Logged out');
-    localStorage.removeItem(API_CONSTANTS.TOKEN_KEY);
-    this.loginAuth.setAuthStatus(false);
+  navigateToRegister() {
+    this.router.navigate(['/registration']); // Replace '/register' with your register component route
   }
-  
-
 }
