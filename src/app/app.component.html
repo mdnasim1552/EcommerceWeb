@@ -23,11 +23,12 @@
       <a mat-list-item routerLink="/product">Home</a>
       <a mat-list-item routerLink="/">Profile</a>
       <a mat-list-item routerLink="/">Settings</a>
-      <a mat-list-item routerLink="/login">Logout</a>
+      <a *ngIf="!isLoggedIn" mat-list-item routerLink="/login">Login</a>
+      <a *ngIf="isLoggedIn" mat-list-item (click)="onLogout()">Logout</a>
     </mat-nav-list>
   </mat-sidenav>
-  <mat-sidenav class="mat-right-sidenav" #customercartnav mode="side" opened="false" position="end">
-    <app-customer-cart></app-customer-cart>
+  <mat-sidenav class="mat-right-sidenav" #customercartnav opened="false" position="end">
+    <app-cart></app-cart>
   </mat-sidenav>
   <mat-sidenav-content>
     <div class="content">

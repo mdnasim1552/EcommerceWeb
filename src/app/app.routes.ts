@@ -1,8 +1,8 @@
 import { Routes } from '@angular/router';
 import { ProductsComponent } from './pages/products/products.component';
-import { CustomerCartComponent } from './pages/customer-cart/customer-cart.component';
 import { LoginComponent } from './pages/auth/login/login.component';
 import { RegistrationComponent } from './pages/auth/registration/registration.component';
+import { CartComponent } from './pages/cart/cart.component';
 
 
 
@@ -26,8 +26,8 @@ export const routes: Routes = [
         component: RegistrationComponent
     },
     {
-        path: 'customerCart',
+        path: 'Cart',
         title: 'Cart',
-        component: CustomerCartComponent
+        component: CartComponent
     }
 ];

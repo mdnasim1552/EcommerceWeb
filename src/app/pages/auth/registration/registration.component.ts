@@ -7,6 +7,10 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { merge } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { AuthService } from '../../../service/auth.service';
+import { RegisterUser } from '../../../model/register-user.model';
+import { API_CONSTANTS } from '../../../constant/constant';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-registration',
@@ -27,7 +31,7 @@ export class RegistrationComponent {
     passwordErrorMessage = signal('');
     confirmPasswordErrorMessage = signal('');
 
-    constructor() {
+    constructor(private registerAuth: AuthService, private router: Router) {
         merge(this.fullName.statusChanges, this.fullName.valueChanges)
           .pipe(takeUntilDestroyed())
           .subscribe(() => this.updateFullNameErrorMessage());
@@ -47,7 +51,26 @@ export class RegistrationComponent {
           .subscribe(() => this.updateConfirmPasswordErrorMessage());
       }
     onSubmit() {
-
+      if (this.fullName.valid && this.email.valid && this.password.valid && this.confirmPassword.valid) {
+        const user: RegisterUser = {
+          fullName: this.fullName.value!,
+          email: this.email.value!,
+          password: this.password.value!
+        };
+    
+        console.log('Registering User:', user);
+    
+        this.registerAuth.Register(user).subscribe({
+          next: (response) => {
+            if (response.result) {
+              this.router.navigate(['/login'], { queryParams: { email: user.email, password: this.password.value } });
+            }
+          },
+          error: (error) => {
+            console.error('Error during registration:', error);
+          }
+        });
+      }
     }
     updateFullNameErrorMessage() {
       if (this.fullName.hasError('required')) {

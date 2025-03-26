@@ -11,7 +11,7 @@ import { BehaviorSubject, merge, Observable } from 'rxjs';
 import { AuthService } from '../../../service/auth.service';
 import { API_CONSTANTS } from '../../../constant/constant';
 import { error } from 'console';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 declare global {
   interface Window {
     google: any;
@@ -34,7 +34,7 @@ export class LoginComponent implements OnInit, AfterViewInit  {
   passwordErrorMessage = signal('');
   user!: SocialUser | null;
   
-  constructor(private authService: SocialAuthService,private loginAuth: AuthService,private router: Router) {
+  constructor(private authService: SocialAuthService,private loginAuth: AuthService,private router: Router,private route: ActivatedRoute) {
     merge(this.email.statusChanges, this.email.valueChanges)
       .pipe(takeUntilDestroyed())
       .subscribe(() => this.updateEmailErrorMessage());
@@ -75,7 +75,10 @@ export class LoginComponent implements OnInit, AfterViewInit  {
         if (response.result) {
           localStorage.setItem(API_CONSTANTS.TOKEN_KEY, response.data.token);
           localStorage.setItem(API_CONSTANTS.AUTH_TYPE, 'social');
+          localStorage.setItem(API_CONSTANTS.USER,JSON.stringify(response.data.user));
           this.loginAuth.setAuthStatus(true);
+          this.loginAuth.setAuthType('social');
+          this.router.navigate(['/']);
         }
       },
       error: error => {
@@ -93,7 +96,10 @@ export class LoginComponent implements OnInit, AfterViewInit  {
           if (response.result) {
             localStorage.setItem(API_CONSTANTS.TOKEN_KEY, response.data.token);
             localStorage.setItem(API_CONSTANTS.AUTH_TYPE, 'user');
+            localStorage.setItem(API_CONSTANTS.USER,JSON.stringify(response.data.user));
             this.loginAuth.setAuthStatus(true);
+            this.loginAuth.setAuthType('user');
+            this.router.navigate(['/']);
           }
         },error:error=>{
           console.error('Error to login:', error);
@@ -103,6 +109,18 @@ export class LoginComponent implements OnInit, AfterViewInit  {
     }
   }
   ngOnInit() {
+    if (this.loginAuth.hasValidToken()) {
+      this.router.navigate(['/']); // Redirect to home or dashboard
+    }
+    this.route.queryParams.subscribe(params => {
+      if (params['email']) {
+        this.email.setValue(params['email']); // Populate email field
+      }
+      if (params['password']) {
+        this.password.setValue(params['password']); // Populate email field
+      }
+    });
+    
     // this.authService.authState.subscribe(user => {
     //   this.user = user;
     //   if (user) {
@@ -114,6 +132,7 @@ export class LoginComponent implements OnInit, AfterViewInit  {
     //           if (response.result) {
     //             localStorage.setItem(API_CONSTANTS.TOKEN_KEY, response.data.token);
     //             localStorage.setItem(API_CONSTANTS.AUTH_TYPE, 'social');
+    //             localStorage.setItem(API_CONSTANTS.USER,JSON.stringify(response.data.user));
     //             this.loginAuth.setAuthStatus(true);
     //           }
     //         },
