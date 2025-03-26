@@ -1,1 +1,36 @@
-<p>cart works!</p>
+<!-- <h2>Your Cart</h2>
+<ul>
+  <li *ngFor="let item of cartItems">
+    {{ item.product?.Name }} - ${{ item.product?.Price }} - ${{ item.Quantity }}
+  </li>
+</ul>
+<button (click)="clearCart()">Clear Cart</button> -->
+<div class="cart-container">
+  <h4>Your Cart</h4>
+
+  <mat-card *ngFor="let item of cartItems" class="cart-item">
+    <div class="cart-content">
+      <img [src]="getFullImagePath(item.product?.Image)" alt="{{ item.product?.Name }}" class="product-image" />/
+      
+      <div class="product-details">
+        <h5>{{ item.product?.Name }}</h5>
+        <p>{{ item.product?.Description }}</p>
+        <p class="price">Price: ${{ item.product?.Price }}</p>
+
+        <mat-form-field appearance="outline" class="quantity-field">
+          <input matInput type="number" [(ngModel)]="item.Quantity" min="1">
+        </mat-form-field>
+
+        <button mat-icon-button color="warn" (click)="removeFromCart(item)">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
+    </div>
+  </mat-card>
+
+  <div class="cart-actions">
+    <button mat-raised-button color="warn" (click)="clearCart()">Clear Cart</button>
+    <button mat-raised-button color="primary">Proceed to Checkout</button>
+  </div>
+</div>
+

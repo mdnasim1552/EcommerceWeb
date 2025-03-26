@@ -22,11 +22,11 @@
             }
         </mat-form-field>
         
-        <div class="social-login">
-            <button mat-raised-button color="primary" type="submit" [disabled]="email.invalid || password.invalid">
+        <!-- <div class="social-login"> -->
+            <button mat-raised-button color="primary" type="submit" [disabled]="email.invalid || password.invalid" class="full-width">
                 Login
             </button>
-            <button mat-raised-button color="accent" type="button" (click)="navigateToRegister()">
+            <button mat-raised-button color="accent" type="button" (click)="navigateToRegister()" class="full-width">
                 Register
             </button>
             <!-- <button mat-raised-button color="warn" (click)="loginWithGoogle()">
@@ -37,10 +37,10 @@
                 <img src="assets/google-icon.svg" alt="Google logo" width="24" height="24">
                 Sign in with Google
               </button> -->
-              <div id="google-signin-btn"></div>
-            <button mat-raised-button color="primary" (click)="loginWithFacebook()">
+              <div id="google-signin-btn" class="full-width"></div>
+            <button mat-raised-button color="primary" (click)="loginWithFacebook()" class="full-width">
                 <mat-icon>facebook</mat-icon> Login with Facebook
             </button>
-        </div>
+        <!-- </div> -->
     </form>
 </mat-card>

@@ -38,7 +38,7 @@
                 <mat-error>{{ confirmPasswordErrorMessage() }}</mat-error>
             }
         </mat-form-field>
-        <button mat-raised-button color="primary" type="submit" [disabled]="email.invalid || password.invalid">
+        <button mat-raised-button color="primary" type="submit" [disabled]="email.invalid || password.invalid || confirmPassword.invalid || fullName.invalid" class="full-width">
             Register
         </button>
     </form>
